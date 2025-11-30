@@ -6,6 +6,7 @@ interface ResultsCardProps {
   currentPrice: number;
   impliedGrowth: number;
   currentGrowthInput: number;
+  currencySymbol?: string;
 }
 
 export const ResultsCard: React.FC<ResultsCardProps> = ({
@@ -13,6 +14,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
   currentPrice,
   impliedGrowth,
   currentGrowthInput,
+  currencySymbol = "$",
 }) => {
   const upside = ((intrinsicValue - currentPrice) / currentPrice) * 100;
   const isUndervalued = intrinsicValue > currentPrice;
@@ -29,7 +31,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
           <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
             <p className="text-gray-400 text-xs mb-1">Intrinsic Value</p>
             <p className={`text-2xl font-bold ${isUndervalued ? "text-emerald-400" : "text-rose-400"}`}>
-              ${intrinsicValue.toFixed(2)}
+              {currencySymbol}{intrinsicValue.toFixed(2)}
             </p>
           </div>
           <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
@@ -58,7 +60,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
         </div>
         
         <p className="text-gray-400 text-sm mb-4">
-          To justify the current price of <span className="text-white font-bold">${currentPrice.toFixed(2)}</span>, 
+          To justify the current price of <span className="text-white font-bold">{currencySymbol}{currentPrice.toFixed(2)}</span>, 
           the company needs to grow earnings at:
         </p>
         

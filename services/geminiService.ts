@@ -10,7 +10,7 @@ export async function fetchStockData(ticker: string): Promise<{ data: StockData;
       Act as a senior equity research analyst. Conduct a comprehensive "Stock Simplifier" analysis for the ticker "${ticker}".
       
       I need 6 categories of data:
-      1. Current Financials (Price, EPS, FCF, P/S, Consensus Growth).
+      1. General Info & Current Financials (Company Name, Description, Price, EPS, FCF, P/S, Consensus Growth).
       2. Historical Growth & Valuation (CAGR for Revenue, EPS, FCF AND Historical Valuation Multiples).
       3. Stock Performance & Valuation History (10-year price and year-end valuation multiples).
       4. Recent Major News (Top 3 events/headlines).
@@ -18,6 +18,8 @@ export async function fetchStockData(ticker: string): Promise<{ data: StockData;
       6. Qualitative "Stock Simplifier" Report (Business Phase, Moat, Risks, etc.) with high quantitative density.
 
       Data Requirements:
+      - **Company Name**: Full legal name.
+      - **Description**: A concise 1-2 sentence description of what the company does.
       - **Price**: Current market price.
       - **EPS**: Trailing Twelve Month.
       - **FCF**: Trailing Twelve Month Free Cash Flow per share.
@@ -72,6 +74,8 @@ export async function fetchStockData(ticker: string): Promise<{ data: StockData;
       \`\`\`json
       {
         "ticker": "string",
+        "companyName": "string",
+        "description": "string",
         "price": number,
         "eps": number,
         "fcf": number,
@@ -169,6 +173,8 @@ export async function fetchStockData(ticker: string): Promise<{ data: StockData;
     return {
       data: {
         ticker: parsedData.ticker || ticker.toUpperCase(),
+        companyName: parsedData.companyName || "",
+        description: parsedData.description || "",
         price: Number(parsedData.price),
         eps: Number(parsedData.eps),
         fcf: Number(parsedData.fcf),

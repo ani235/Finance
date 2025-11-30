@@ -91,6 +91,8 @@ export interface ValuationPoint {
 
 export interface StockData {
   ticker: string;
+  companyName?: string;
+  description?: string;
   price: number;
   eps: number;
   fcf: number; // Free Cash Flow per share

@@ -37,6 +37,15 @@ const App: React.FC = () => {
   const [intrinsicValue, setIntrinsicValue] = useState<number>(0);
   const [impliedGrowth, setImpliedGrowth] = useState<number>(0);
 
+  // Helper to get currency symbol
+  const getCurrencySymbol = (currencyCode: string) => {
+    try {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode }).formatToParts(0).find(x => x.type === 'currency')?.value || '$';
+    } catch {
+      return '$';
+    }
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticker.trim()) return;
@@ -107,6 +116,8 @@ const App: React.FC = () => {
     setActiveTab('simplifier');
     setStockData({
       ticker: "CUSTOM",
+      companyName: "Manual Entry Company",
+      description: "A custom company entry for manual analysis.",
       price: 100,
       eps: 5,
       fcf: 4,
@@ -174,6 +185,8 @@ const App: React.FC = () => {
   const updateParam = useCallback((key: keyof DCFParams, value: number | string) => {
     setDcfParams((prev) => ({ ...prev, [key]: value }));
   }, []);
+
+  const currencySymbol = stockData ? getCurrencySymbol(stockData.currency) : '$';
 
   return (
     <div className="min-h-screen p-4 md:p-8 font-sans bg-[#111827] text-gray-100">
@@ -248,7 +261,7 @@ const App: React.FC = () => {
                {/* Left: Basic Info & Inputs */}
                <div className="flex-1 flex flex-col justify-start">
                   <div>
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-baseline gap-3 mb-1">
                         {manualMode ? (
                             <input 
                                 type="text" 
@@ -259,39 +272,51 @@ const App: React.FC = () => {
                         ) : (
                             <h2 className="text-4xl font-bold text-white tracking-tight">{stockData.ticker}</h2>
                         )}
-                        <span className="text-gray-500 text-sm bg-gray-900 px-2 py-1 rounded">{stockData.currency}</span>
+                        <span className="text-gray-500 text-sm bg-gray-900 px-2 py-1 rounded self-center">{stockData.currency}</span>
+                      </div>
+                      
+                      {/* Company Name & Description */}
+                      <div className="mb-4">
+                          <h3 className="text-lg font-medium text-emerald-400">{stockData.companyName}</h3>
+                          <p className="text-xs text-gray-400 mt-1 max-w-lg leading-relaxed">{stockData.description}</p>
                       </div>
 
                       <div className="flex flex-wrap gap-6 mt-4">
                          <div>
                             <span className="text-gray-400 text-xs block mb-1">Price</span>
                             <div className="relative">
-                                <span className="absolute left-2 top-0.5 text-gray-500 font-bold text-xs">$</span>
+                                <span className="absolute left-2 top-0.5 text-gray-500 font-bold text-xs">{currencySymbol}</span>
                                 <input 
                                     type="number" 
                                     value={stockData.price}
                                     onChange={(e) => handleStockDataChange('price', parseFloat(e.target.value))}
-                                    className="bg-gray-900 border border-gray-700 rounded py-0.5 pl-4 pr-1 w-24 text-lg font-bold text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                    className="bg-gray-900 border border-gray-700 rounded py-0.5 pl-8 pr-1 w-32 text-lg font-bold text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                              </div>
                          </div>
                          <div>
                             <span className="text-gray-400 text-xs block mb-1">EPS (TTM)</span>
-                            <input 
-                                type="number" 
-                                value={stockData.eps}
-                                onChange={(e) => handleStockDataChange('eps', parseFloat(e.target.value))}
-                                className="bg-gray-900 border border-gray-700 rounded py-0.5 px-2 w-20 text-lg font-mono text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                            />
+                            <div className="relative">
+                                <span className="absolute left-2 top-0.5 text-gray-500 font-bold text-xs">{currencySymbol}</span>
+                                <input 
+                                    type="number" 
+                                    value={stockData.eps}
+                                    onChange={(e) => handleStockDataChange('eps', parseFloat(e.target.value))}
+                                    className="bg-gray-900 border border-gray-700 rounded py-0.5 pl-8 pr-1 w-32 text-lg font-bold text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                             </div>
                          </div>
                          <div>
                             <span className="text-gray-400 text-xs block mb-1">FCF (TTM)</span>
-                            <input 
-                                type="number" 
-                                value={stockData.fcf}
-                                onChange={(e) => handleStockDataChange('fcf', parseFloat(e.target.value))}
-                                className="bg-gray-900 border border-gray-700 rounded py-0.5 px-2 w-20 text-lg font-mono text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                            />
+                            <div className="relative">
+                                <span className="absolute left-2 top-0.5 text-gray-500 font-bold text-xs">{currencySymbol}</span>
+                                <input 
+                                    type="number" 
+                                    value={stockData.fcf}
+                                    onChange={(e) => handleStockDataChange('fcf', parseFloat(e.target.value))}
+                                    className="bg-gray-900 border border-gray-700 rounded py-0.5 pl-8 pr-1 w-32 text-lg font-bold text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                             </div>
                          </div>
                       </div>
 
@@ -323,6 +348,7 @@ const App: React.FC = () => {
                         ticker={stockData.ticker} 
                         // Smart default based on lifecycle
                         defaultMetric={['Startup', 'Hypergrowth'].includes(stockData.report?.businessPhase.phase || '') ? 'PS' : 'Price'}
+                        currency={stockData.currency}
                    />
                    
                    {/* Performance Grid */}
@@ -459,7 +485,7 @@ const App: React.FC = () => {
                         </div>
                         <div className="text-right">
                              <span className="text-xs text-gray-400 block">Baseline Price</span>
-                             <span className="text-sm font-bold text-white">${stockData.price.toFixed(2)}</span>
+                             <span className="text-sm font-bold text-white">{currencySymbol}{stockData.price.toFixed(2)}</span>
                         </div>
                     </div>
                     
@@ -467,6 +493,7 @@ const App: React.FC = () => {
                       baseValue={metricType === 'EPS' ? stockData.eps : stockData.fcf} 
                       currentParams={dcfParams} 
                       currentPrice={stockData.price} 
+                      currencySymbol={currencySymbol}
                     />
                   </div>
                 </div>
@@ -478,6 +505,7 @@ const App: React.FC = () => {
                     currentPrice={stockData.price}
                     impliedGrowth={impliedGrowth}
                     currentGrowthInput={dcfParams.growthRate}
+                    currencySymbol={currencySymbol}
                   />
 
                   {/* Implied Growth Sensitivity Table */}

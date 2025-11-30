@@ -10,6 +10,7 @@ interface ScenarioAnalysisProps {
   businessPhase?: string;
   aiVerdict?: SimplifierReport['verdict'];
   onValuationChange?: (data: { normalValue: number; upside: number; impliedGrowth: number }) => void;
+  currencySymbol?: string;
 }
 
 export const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({
@@ -18,7 +19,8 @@ export const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({
   baseParams,
   businessPhase = "Operating Leverage",
   aiVerdict,
-  onValuationChange
+  onValuationChange,
+  currencySymbol = "$",
 }) => {
   const [discountRate, setDiscountRate] = useState<number>(baseParams.discountRate);
   const [terminalMethod, setTerminalMethod] = useState<TerminalMethod>('multiple');
@@ -353,7 +355,7 @@ export const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({
                         <div className="text-center mb-2">
                             <span className="text-xs text-gray-500">Intrinsic Value (Buy Price)</span>
                             <div className={`text-3xl font-bold ${isBuy ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                ${buyPrice.toFixed(2)}
+                                {currencySymbol}{buyPrice.toFixed(2)}
                             </div>
                         </div>
                         

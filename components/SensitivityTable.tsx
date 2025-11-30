@@ -6,12 +6,14 @@ interface SensitivityTableProps {
   baseValue: number;
   currentParams: DCFParams;
   currentPrice: number;
+  currencySymbol?: string;
 }
 
 export const SensitivityTable: React.FC<SensitivityTableProps> = ({
   baseValue,
   currentParams,
   currentPrice,
+  currencySymbol = "$",
 }) => {
   const { growthRate, discountRate } = currentParams;
 
@@ -66,9 +68,9 @@ export const SensitivityTable: React.FC<SensitivityTableProps> = ({
                   <td 
                     key={`${d}-${g}`} 
                     className={`p-2 text-center border border-gray-700 ${bgColor} ${textColor} transition-colors hover:brightness-110 cursor-default`}
-                    title={`Intrinsic Value: $${value.toFixed(2)}`}
+                    title={`Intrinsic Value: ${currencySymbol}${value.toFixed(2)}`}
                   >
-                    ${value.toFixed(0)}
+                    {currencySymbol}{value.toFixed(0)}
                   </td>
                 );
               })}

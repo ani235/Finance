@@ -6,9 +6,10 @@ interface StockChartProps {
   data: ValuationPoint[];
   ticker: string;
   defaultMetric?: 'Price' | 'PE' | 'PFCF' | 'PS';
+  currency?: string;
 }
 
-export const StockChart: React.FC<StockChartProps> = ({ data, ticker, defaultMetric = 'Price' }) => {
+export const StockChart: React.FC<StockChartProps> = ({ data, ticker, defaultMetric = 'Price', currency = 'USD' }) => {
   const [metric, setMetric] = useState<'Price' | 'PE' | 'PFCF' | 'PS'>(defaultMetric);
   const [yearsToShow, setYearsToShow] = useState<number>(10);
 
@@ -36,11 +37,21 @@ export const StockChart: React.FC<StockChartProps> = ({ data, ticker, defaultMet
     );
   }
 
+  // Helper to get symbol
+  const getCurrencySymbol = (code: string) => {
+    try {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).formatToParts(0).find(x => x.type === 'currency')?.value || '$';
+    } catch {
+      return '$';
+    }
+  };
+  const currencySymbol = getCurrencySymbol(currency);
+
   // Determine color and label based on metric
   let color = "#10b981"; // Emerald for Price
   let label = "Price";
   let dataKey = "price";
-  let prefix = "$";
+  let prefix = currencySymbol;
 
   if (metric === 'PE') {
     color = "#3b82f6"; // Blue
